@@ -15,6 +15,7 @@ type MarshalOptions struct {
 	// If this is true, then all struct names will be stripped from objects
 	// and "stdClass" will be used instead. The default value is false.
 	OnlyStdClass bool
+	TagName      string
 }
 
 // DefaultMarshalOptions will create a new instance of MarshalOptions with
@@ -22,6 +23,7 @@ type MarshalOptions struct {
 func DefaultMarshalOptions() *MarshalOptions {
 	options := new(MarshalOptions)
 	options.OnlyStdClass = false
+	options.TagName = "php"
 
 	return options
 }
@@ -161,7 +163,7 @@ func MarshalStruct(input interface{}, options *MarshalOptions) ([]byte, error) {
 
 		visibleFieldCount++
 
-		fieldName, fieldOptions := parseTag(typeOfValue.Field(i).Tag.Get("php"))
+		fieldName, fieldOptions := parseTag(typeOfValue.Field(i).Tag.Get(options.TagName))
 
 		if fieldOptions.Contains("omitnilptr") {
 			if f.Kind() == reflect.Ptr && f.IsNil() {

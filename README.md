@@ -69,3 +69,39 @@ func main() {
 	fmt.Println(out)
 }
 ```
+
+### Using customer struct field tags for marshalling
+
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/elliotchance/phpserialize"
+)
+
+type MyStruct struct {
+	// Will be marhsalled as my_purpose
+	MyPurpose string `json:"my_purpose"`
+	// Will be marshalled as my_motto, and only if not a nil pointer
+	MyMotto *string `json:"my_motto,omitnilptr"`
+	// Will not be marshalled
+	MySecret string `json:"-"`
+}
+
+func main() {
+	my := MyStruct{
+		MyPurpose: "No purpose",
+		MySecret:  "Has a purpose",
+	}
+
+	options := phpserialize.DefaultMarshalOptions()
+	options.TagName = "json"
+	out, err := phpserialize.Marshal(my, options)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(out)
+}
+```
